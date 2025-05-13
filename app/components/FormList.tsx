@@ -49,7 +49,7 @@ export default function FormList() {
   return (
     <div className="p-4 max-w-md mx-auto pb-6">
       <h1 className="text-2xl font-bold mb-2">顺丰快递末端服务实地调研</h1>
-      <p className="text-sm my-2">*所有数据储存的本地浏览器，请勿清除浏览器缓存！</p>
+      <p className="text-sm my-2">*所有数据储存在本地浏览器，请勿清除浏览器缓存！</p>
       <div className='border-b h-px w-full mb-4'></div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">表单列表</h2>
