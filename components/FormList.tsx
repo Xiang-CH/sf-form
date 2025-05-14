@@ -10,7 +10,6 @@ import { format } from 'date-fns';
 
 export default function FormList() {
   const [forms, setForms] = useState<Form[]>([]);
-  const [showNewFormModal, setShowNewFormModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export default function FormList() {
   };
 
   const navigateToForm = (formId: string) => {
-    router.push(`/form/${formId}`);
+    router.push(`/form/${formId}/entry`);
   };
 
   // Group forms by surveyDate (most recent first)
@@ -54,7 +53,7 @@ export default function FormList() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">表单列表</h2>
         <button
-          onClick={() => setShowNewFormModal(true)}
+          onClick={() => router.push('/form/new')}
           className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg"
           aria-label="新建表单"
         >
@@ -66,7 +65,7 @@ export default function FormList() {
         <div className="text-center py-8 bg-gray-100 rounded-lg">
           <p className="text-gray-500 mb-4">暂无表单</p>
           <button
-            onClick={() => setShowNewFormModal(true)}
+            onClick={() => router.push('/form/new')}
             className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg"
           >
             创建第一个表单
@@ -123,26 +122,6 @@ export default function FormList() {
             </div>
           ))}
         </>
-      )}
-
-      {showNewFormModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">创建新表单</h2>
-            <button
-              onClick={() => router.push('/form/new')}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-lg mb-3"
-            >
-              创建新表单
-            </button>
-            <button
-              onClick={() => setShowNewFormModal(false)}
-              className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
-            >
-              取消
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );

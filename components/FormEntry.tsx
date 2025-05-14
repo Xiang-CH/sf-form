@@ -8,7 +8,7 @@ import { useToast } from './Toast';
 
 interface FormEntryProps {
   formId: string;
-  entryId?: string; // Optional - if provided, we're in edit mode
+  entryId?: string | null; // Optional - if provided, we're in edit mode
 }
 
 export default function FormEntry({ formId, entryId }: FormEntryProps) {
@@ -177,7 +177,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
               //   handleCheckboxContainerClick('addressDelivered');
               // }}
             >
-              地址妥投
+              订单妥投
             </span>
           </div>
 

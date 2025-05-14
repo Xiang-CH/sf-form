@@ -45,7 +45,11 @@ export default function FormTable({ formId }: FormTableProps) {
   };
 
   const handleEditEntry = (entryId: string) => {
-    router.push(`/form/${formId}/entry/${entryId}`);
+    router.push(`/form/${formId}/entry?entryId=${entryId}`);
+  };
+
+  const handleEditForm = () => {
+    router.push(`/form/${formId}`);
   };
 
   if (!form) {
@@ -77,7 +81,19 @@ export default function FormTable({ formId }: FormTableProps) {
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-2">表单信息</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold mb-2">表单信息</h2>
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent row click
+              handleEditForm();
+            }}
+            className="text-blue-600 hover:text-blue-800 w-8 h-8"
+            aria-label="编辑表单信息"
+          >
+            <FaEdit size={22} />
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <div>
             <p className="text-gray-600 text-sm">城市名</p>
@@ -125,10 +141,10 @@ export default function FormTable({ formId }: FormTableProps) {
                   运单号后四位
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  地址妥投
+                  订单妥投
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  派送至三方
+                  派至三方
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   客户交互
@@ -137,7 +153,7 @@ export default function FormTable({ formId }: FormTableProps) {
                   客户寄件
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  客户交互（电退）
+                  电退交互
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   备注
@@ -157,21 +173,11 @@ export default function FormTable({ formId }: FormTableProps) {
                   <td className="px-4 py-3 whitespace-nowrap">
                     {entry.trackingNumberLastFour}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {entry.addressDelivered ? '是' : '否'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {entry.thirdPartyDelivery ? '是' : '否'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {entry.customerInteraction ? '是' : '否'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {entry.customerInteractionSending ? '是' : '否'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {entry.customerInteractionReturn ? '是' : '否'}
-                  </td>
+                  <BoolFormCell value={entry.addressDelivered} />
+                  <BoolFormCell value={entry.thirdPartyDelivery} />
+                  <BoolFormCell value={entry.customerInteraction} />
+                  <BoolFormCell value={entry.customerInteractionSending} />
+                  <BoolFormCell value={entry.customerInteractionReturn} />
                   <td className="px-4 py-3">
                     {entry.notes || '-'}
                   </td>
@@ -208,6 +214,14 @@ export default function FormTable({ formId }: FormTableProps) {
 
       <div className="mt-6">
         <button
+          onClick={handleAddEntry}
+          className="bg-blue-500 hover:bg-blue-600 text-white p-3 py-4 rounded-lg flex items-center w-full justify-center mb-4"
+          aria-label="添加条目"
+        >
+          <FaPlus size={20} className="mr-2" />
+          <span>添加条目</span>
+        </button>
+        <button
           onClick={() => router.push('/')}
           className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
         >
@@ -216,4 +230,13 @@ export default function FormTable({ formId }: FormTableProps) {
       </div>
     </div>
   );
+}
+
+
+function BoolFormCell ({value}: {value: boolean}) {
+  return (
+    <td className={"px-4 py-3 whitespace-nowrap " + (value ? "text-green-600" : "text-red-300")}>
+      {value ? '✓' : '✗'}
+    </td>
+  )
 }
