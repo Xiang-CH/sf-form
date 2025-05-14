@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -6,7 +6,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 
 export const dynamic = 'force-static'
-export const revalidate = 0
+// export const revalidate = 0
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,21 +18,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#f9fafb"
+}
+
 export const metadata: Metadata = {
   title: "顺丰表单",
   description: "移动端表单填写应用",
   manifest: "/manifest.json",
-  themeColor: "#f9fafb",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "顺丰表单",
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
   },
   icons: {
     icon: [

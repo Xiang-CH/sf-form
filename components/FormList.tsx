@@ -32,7 +32,7 @@ export default function FormList() {
   };
 
   const navigateToForm = (formId: string) => {
-    router.push(`/form/${formId}/entry`);
+    router.push(`/entry?formId=${formId}`);
   };
 
   // Group forms by surveyDate (most recent first)
@@ -53,7 +53,7 @@ export default function FormList() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">表单列表</h2>
         <button
-          onClick={() => router.push('/form/new')}
+          onClick={() => router.push('/form')}
           className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg"
           aria-label="新建表单"
         >
@@ -65,7 +65,7 @@ export default function FormList() {
         <div className="text-center py-8 bg-gray-100 rounded-lg">
           <p className="text-gray-500 mb-4">暂无表单</p>
           <button
-            onClick={() => router.push('/form/new')}
+            onClick={() => router.push('/form')}
             className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg"
           >
             创建第一个表单
@@ -77,7 +77,9 @@ export default function FormList() {
             <div key={date}>
               <h3 className="text-lg font-semibold mt-6">{date}</h3>
               <ul className="space-y-4">
-                {group.map(form => (
+                {group.sort(
+                  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                 ).map(form => (
                   <li
                     key={form.id}
                     onClick={() => navigateToForm(form.id)}

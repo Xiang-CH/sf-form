@@ -40,7 +40,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
         setEntryData(entryDataWithoutId);
       } else {
         showToast('找不到条目', 'error');
-        router.push(`/form/${formId}/table`);
+        router.push(`/table?formId=${formId}`);
       }
     }
   }, [entryId, formId, router, showToast]);
@@ -83,7 +83,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
       if (success) {
         showToast('条目已更新', 'success');
         // Navigate back to table view after successful edit
-        router.push(`/form/${formId}/table`);
+        router.push(`/table?formId=${formId}`);
       } else {
         showToast('更新条目失败', 'error');
       }
@@ -115,7 +115,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
   };
 
   const handleViewTable = () => {
-    router.push(`/form/${formId}/table`);
+    router.push(`/table?formId=${formId}`);
   };
 
   const handleCheckboxContainerClick = (name: string) => {

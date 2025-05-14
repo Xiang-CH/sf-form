@@ -96,7 +96,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
     if (onSave) {
       onSave(savedFormId);
     } else {
-      router.push(`/form/${savedFormId}/entry`);
+      router.push(`/entry?formId=${savedFormId}`);
     }
   };
 

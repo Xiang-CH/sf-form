@@ -41,15 +41,15 @@ export default function FormTable({ formId }: FormTableProps) {
   };
 
   const handleAddEntry = () => {
-    router.push(`/form/${formId}/entry`);
+    router.push(`/entry?formId=${formId}`);
   };
 
   const handleEditEntry = (entryId: string) => {
-    router.push(`/form/${formId}/entry?entryId=${entryId}`);
+    router.push(`/entry?formId=${formId}&entryId=${entryId}`);
   };
 
   const handleEditForm = () => {
-    router.push(`/form/${formId}`);
+    router.push(`/form?formId=${formId}`);
   };
 
   if (!form) {

@@ -1,13 +1,18 @@
 'use client';
 
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import FormEntry from '@/components/FormEntry';
 
 export default function FormEntryPage() {
-  const params = useParams();
+  const router = useRouter();
+  const params = useSearchParams();
   const searchParams = useSearchParams();
-  const formId = params.id as string;
+  const formId = params.get('formId') as string;
   const entryId = searchParams.get('entryId');
+
+  if (!formId) {
+    router.push('/form');
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

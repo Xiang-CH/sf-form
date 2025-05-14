@@ -1,11 +1,11 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import FormMetadata from '@/components/FormMetadata';
 
 export default function EditFormPage() {
-  const params = useParams();
-  const formId = params.id as string;
+  const params = useSearchParams();
+  const formId = params.get("formId") as string ?? "new";
 
   return (
     <div className="bg-gray-50">
