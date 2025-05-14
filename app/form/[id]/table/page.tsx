@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import FormTable from '../../../components/FormTable';
+import FormTable from '@/components/FormTable';
 
 export default function FormTablePage() {
   const params = useParams();

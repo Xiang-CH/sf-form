@@ -1,6 +1,6 @@
 'use client';
 
-import FormMetadata from '../../components/FormMetadata';
+import FormMetadata from '@/components/FormMetadata';
 
 export default function NewFormPage() {
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import FormMetadata from '../../components/FormMetadata';
+import FormMetadata from '@/components/FormMetadata';
 
 export default function EditFormPage() {
   const params = useParams();

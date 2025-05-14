@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import FormEntry from '../../../components/FormEntry';
+import FormEntry from '@/components/FormEntry';
 
 export default function FormEntryPage() {
   const params = useParams();
