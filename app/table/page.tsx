@@ -13,7 +13,7 @@ export default function FormTablePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <FormTable formId={formId} />
     </div>
   );

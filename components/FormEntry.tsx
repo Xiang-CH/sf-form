@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FormEntry as FormEntryType } from '../types';
 import { addFormEntry, getFormById, getFormEntryById, updateFormEntry } from '../utils/storage';
 import { useToast } from './Toast';
+import SelectableCheckbox from './SelectableCheckbox';
 
 interface FormEntryProps {
   formId: string;
@@ -29,6 +30,8 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
     const form = getFormById(formId);
     return form ? form.entries.length : 0;
   });
+
+  const [isSwiping, setIsSwiping] = useState(false);
 
   // Load entry data if in edit mode
   useEffect(() => {
@@ -83,7 +86,11 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
       if (success) {
         showToast('条目已更新', 'success');
         // Navigate back to table view after successful edit
-        router.push(`/table?formId=${formId}`);
+        setIsSwiping(true);
+        setTimeout(() => {
+          router.push(`/table?formId=${formId}`);
+          setIsSwiping(false);
+        }, 500);
       } else {
         showToast('更新条目失败', 'error');
       }
@@ -108,6 +115,11 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
 
         // Show success message
         showToast(`条目已保存！这是第 ${currentEntryCount + 1} 个条目。`, 'success');
+
+        setIsSwiping(true);
+        setTimeout(() => {
+          setIsSwiping(false);
+        }, 300);
       } else {
         showToast('保存条目失败', 'error');
       }
@@ -118,12 +130,8 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
     router.push(`/table?formId=${formId}`);
   };
 
-  const handleCheckboxContainerClick = (name: string) => {
-    setEntryData(prev => ({ ...prev, [name]: !prev[name as keyof typeof prev] }));
-  };
-
   return (
-    <div className="p-4 max-w-md mx-auto pb-2">
+    <div className={`p-4 pt-6 max-w-md mx-auto pb-2 animate-fade-in-left ${isSwiping ? 'swipe-left-animation' : ''}`}>
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{isEditMode ? '编辑条目' : '添加条目'}</h1>
@@ -154,136 +162,45 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           {/* First column */}
-          <div
-            className={`flex items-center p-3 rounded-lg border border-gray-200 shadow-sm ${entryData.addressDelivered ? 'bg-green-100' : 'bg-gray-50'} cursor-pointer`}
-            onClick={() => handleCheckboxContainerClick('addressDelivered')}
-          >
-            <input
-              type="checkbox"
-              id="addressDelivered"
-              name="addressDelivered"
-              checked={entryData.addressDelivered}
-              onChange={handleChange}
-              className="w-5 h-5"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span
-              className="ml-2 block text-base cursor-pointer"
-              // htmlFor="addressDelivered"
-              // onClick={(e) => {
-              //   e.preventDefault();
-              //   handleCheckboxContainerClick('addressDelivered');
-              // }}
-            >
-              订单妥投
-            </span>
-          </div>
+          <SelectableCheckbox
+            label="订单妥投"
+            name="addressDelivered"
+            checked={entryData.addressDelivered}
+            onChange={handleChange}
+          />
 
-          <div
-            className={`flex items-center p-3 rounded-lg border border-gray-200 shadow-sm ${entryData.thirdPartyDelivery ? 'bg-green-100' : 'bg-gray-50'} cursor-pointer`}
-            onClick={() => handleCheckboxContainerClick('thirdPartyDelivery')}
-          >
-            <input
-              type="checkbox"
-              id="thirdPartyDelivery"
-              name="thirdPartyDelivery"
-              checked={entryData.thirdPartyDelivery}
-              onChange={handleChange}
-              className="w-5 h-5"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span
-              className="ml-2 block text-base cursor-pointer"
-              // htmlFor="thirdPartyDelivery"
-              // onClick={(e) => {
-              //   e.preventDefault();
-              //   handleCheckboxContainerClick('thirdPartyDelivery');
-              // }}
-            >
-              派送至三方
-            </span>
-          </div>
+          <SelectableCheckbox
+            label="派送至三方"
+            name="thirdPartyDelivery"
+            checked={entryData.thirdPartyDelivery}
+            onChange={handleChange}
+          />
 
-          <div
-            className={`flex items-center p-3 rounded-lg border border-gray-200 shadow-sm ${entryData.customerInteraction ? 'bg-green-100' : 'bg-gray-50'} cursor-pointer`}
-            onClick={() => handleCheckboxContainerClick('customerInteraction')}
-          >
-            <input
-              type="checkbox"
-              id="customerInteraction"
-              name="customerInteraction"
-              checked={entryData.customerInteraction}
-              onChange={handleChange}
-              className="w-5 h-5"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span
-              className="ml-2 block text-base cursor-pointer"
-              // htmlFor="customerInteraction"
-              // onClick={(e) => {
-              //   e.preventDefault();
-              //   handleCheckboxContainerClick('customerInteraction');
-              // }}
-            >
-              客户有交互
-            </span>
-          </div>
+          <SelectableCheckbox
+            label="客户有交互"
+            name="customerInteraction"
+            checked={entryData.customerInteraction}
+            onChange={handleChange}
+          />
 
-          <div
-            className={`flex items-center p-3 rounded-lg border border-gray-200 shadow-sm ${entryData.customerInteractionSending ? 'bg-green-100' : 'bg-gray-50'} cursor-pointer`}
-            onClick={() => handleCheckboxContainerClick('customerInteractionSending')}
-          >
-            <input
-              type="checkbox"
-              id="customerInteractionSending"
-              name="customerInteractionSending"
-              checked={entryData.customerInteractionSending}
-              onChange={handleChange}
-              className="w-5 h-5"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span
-              className="ml-2 block text-base cursor-pointer"
-              // htmlFor="customerInteractionSending"
-              // onClick={(e) => {
-              //   e.preventDefault();
-              //   handleCheckboxContainerClick('customerInteractionSending');
-              // }}
-            >
-              客户是否寄件
-            </span>
-          </div>
-
-          <div
-            className={`flex items-center p-3 rounded-lg border border-gray-200 shadow-sm ${entryData.customerInteractionReturn ? 'bg-green-100' : 'bg-gray-50'} cursor-pointer col-span-2`}
-            onClick={() => handleCheckboxContainerClick('customerInteractionReturn')}
-          >
-            <input
-              type="checkbox"
-              id="customerInteractionReturn"
-              name="customerInteractionReturn"
-              checked={entryData.customerInteractionReturn}
-              onChange={handleChange}
-              className="w-5 h-5"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span
-              className="ml-2 block text-base cursor-pointer"
-              // htmlFor="customerInteractionReturn"
-              // onClick={(e) => {
-              //   e.preventDefault();
-              //   handleCheckboxContainerClick('customerInteractionReturn');
-              // }}
-            >
-              如有电退是否有客户交互
-            </span>
-          </div>
+          <SelectableCheckbox
+            label="客户是否寄件"
+            name="customerInteractionSending"
+            checked={entryData.customerInteractionSending}
+            onChange={handleChange}
+          />
         </div>
+        <SelectableCheckbox
+            label="如有电退是否有客户交互"
+            name="customerInteractionReturn"
+            checked={entryData.customerInteractionReturn}
+            onChange={handleChange}
+          />
 
         <div>
-          <label className="block text-gray-700 text-lg mb-1" htmlFor="notes">
+          <label className="block text-gray-700 dark:text-gray-50 text-lg mb-1" htmlFor="notes">
             备注 (滞留 &quot;Z&quot;)
           </label>
           <textarea
@@ -299,7 +216,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-lg text-xl font-medium"
+            className="w-full bg-green-500 hover:bg-green-600 dark:bg-green-400/80 dark:hover:bg-green-600/90 text-white py-4 px-4 rounded-lg text-xl font-medium"
           >
             {isEditMode ? '保存修改' : '保存并继续'}
           </button>
@@ -309,7 +226,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
           <button
             type="button"
             onClick={handleViewTable}
-            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-lg"
+            className="flex-1 bg-blue-500 dark:bg-blue-500/90 hover:bg-blue-600 dark:hover:bg-blue-600/90 text-white py-3 px-4 rounded-lg text-lg"
           >
             查看表格
           </button>
@@ -317,17 +234,12 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
+            className="flex-1 bg-gray-300 dark:bg-gray-300/95  hover:bg-gray-400 dark:hover:bg-gray-100/90 text-gray-800 py-3 px-4 rounded-lg text-lg"
           >
             返回首页
           </button>
         </div>
       </form>
-      <div className='text-sm text-gray-500 mt-8 flex flex-col gap-1'>
-      <p>1、跟随小哥收派工作，逐票客观记录小哥末端作业真实情况，不允许干扰小哥正常工作流程及操作，避免影响真实性。</p>
-      <p>2、 请与小哥提前知会：该记录数据仅用于内部标准优化数据支撑，运单统计结果匿名制，且不作为标准优化之外的公开或第三方使用（比如考核监控等）。</p>
-      <p>3、其他说明：妥投地址“三方”：菜鸟驿站、超市、合作点、丰巢等</p>
-      </div>
     </div>
   );
 }

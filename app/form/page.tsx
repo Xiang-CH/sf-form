@@ -8,7 +8,7 @@ export default function EditFormPage() {
   const formId = params.get("formId") as string ?? "new";
 
   return (
-    <div className="bg-gray-50">
+    <div>
       <FormMetadata formId={formId} />
     </div>
   );

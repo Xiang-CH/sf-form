@@ -6,6 +6,7 @@ import { FaTrash, FaFileExport, FaPlus, FaEdit } from 'react-icons/fa';
 import { Form, FormEntry } from '../types';
 import { getFormById, deleteFormEntry } from '../utils/storage';
 import { exportFormToExcel } from '../utils/excel';
+import { useToast } from './Toast';
 
 interface FormTableProps {
   formId: string;
@@ -13,6 +14,7 @@ interface FormTableProps {
 
 export default function FormTable({ formId }: FormTableProps) {
   const router = useRouter();
+  const toast = useToast();
   const [form, setForm] = useState<Form | null>(null);
 
   useEffect(() => {
@@ -37,6 +39,9 @@ export default function FormTable({ formId }: FormTableProps) {
   const handleExportExcel = () => {
     if (form) {
       exportFormToExcel(form);
+      toast.showToast("导出成功", "success");
+    } else {
+      toast.showToast("空白表单，导出失败", "error");
     }
   };
 
@@ -57,13 +62,13 @@ export default function FormTable({ formId }: FormTableProps) {
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-4xl mx-auto animate-fade-in-up">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{form.name || '未命名表单'}</h1>
         <div className="flex space-x-2">
           <button
             onClick={handleExportExcel}
-            className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg flex items-center"
+            className="bg-green-500 dark:bg-green-500/80 hover:bg-green-600 text-white p-3 rounded-lg flex items-center"
             aria-label="导出Excel"
           >
             <FaFileExport size={20} className="mr-2" />
@@ -71,7 +76,7 @@ export default function FormTable({ formId }: FormTableProps) {
           </button>
           <button
             onClick={handleAddEntry}
-            className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg flex items-center"
+            className="bg-blue-500 dark:bg-blue-500/90 hover:bg-blue-600 text-white p-3 rounded-lg flex items-center"
             aria-label="添加条目"
           >
             <FaPlus size={20} className="mr-2" />
@@ -80,7 +85,7 @@ export default function FormTable({ formId }: FormTableProps) {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
+      <div className="bg-[var(--card)] p-4 rounded-lg shadow dark:shadow-lg mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold mb-2">表单信息</h2>
           <button
@@ -88,7 +93,7 @@ export default function FormTable({ formId }: FormTableProps) {
               e.stopPropagation(); // Prevent row click
               handleEditForm();
             }}
-            className="text-blue-600 hover:text-blue-800 w-8 h-8"
+            className="text-blue-600 dark:text-blue-400/90 hover:text-blue-800 dark:hover:text-blue-600 w-8 h-8"
             aria-label="编辑表单信息"
           >
             <FaEdit size={22} />
@@ -96,78 +101,72 @@ export default function FormTable({ formId }: FormTableProps) {
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <div>
-            <p className="text-gray-600 text-sm">城市名</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">城市名</p>
             <p className="font-medium">{form.cityName}</p>
           </div>
           <div>
-            <p className="text-gray-600 text-sm">调研时间</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">调研时间</p>
             <p className="font-medium">{form.surveyDate}</p>
           </div>
           <div>
-            <p className="text-gray-600 text-sm">网点代码</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">网点代码</p>
             <p className="font-medium">{form.branchCode}</p>
           </div>
           <div>
-            <p className="text-gray-600 text-sm">区域类型</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">区域类型</p>
             <p className="font-medium">{form.areaType || '-'}</p>
           </div>
           <div>
-            <p className="text-gray-600 text-sm">小哥工号</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">小哥工号</p>
             <p className="font-medium">{form.courierCode || '-'}</p>
           </div>
           <div>
-            <p className="text-gray-600 text-sm">条目数</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">条目数</p>
             <p className="font-medium">{form.entries.length}</p>
           </div>
         </div>
       </div>
 
       {form.entries.length === 0 ? (
-        <div className="text-center py-8 bg-gray-100 rounded-lg">
-          <p className="text-gray-500 mb-4">暂无条目</p>
-          <button
-            onClick={handleAddEntry}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg"
-          >
-            添加第一个条目
-          </button>
+        <div className="text-center py-8 bg-gray-100 dark:bg-gray-700 rounded-lg">
+          <p className="text-gray-500 dark:text-gray-400">暂无条目</p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="overflow-x-auto bg-[var(--card)] rounded-lg shadow dark:shadow-lg">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-[var(--card)]">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   运单号后四位
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   订单妥投
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   派至三方
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   客户交互
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   客户寄件
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   电退交互
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   备注
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   操作
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-[var(--card)] divide-y divide-gray-200 dark:divide-gray-700">
               {form.entries.map((entry: FormEntry) => (
                 <tr
                   key={entry.id}
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                   onClick={() => handleEditEntry(entry.id)}
                 >
                   <td className="px-4 py-3 whitespace-nowrap">
@@ -178,30 +177,30 @@ export default function FormTable({ formId }: FormTableProps) {
                   <BoolFormCell value={entry.customerInteraction} />
                   <BoolFormCell value={entry.customerInteractionSending} />
                   <BoolFormCell value={entry.customerInteractionReturn} />
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 dark:text-gray-300">
                     {entry.notes || '-'}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-3">
                       <button
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent row click
                           handleEditEntry(entry.id);
                         }}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 dark:text-blue-400/90 hover:text-blue-800 dark:hover:text-blue-600 w-6 h-6"
                         aria-label="编辑条目"
                       >
-                        <FaEdit size={16} />
+                        <FaEdit size={22} />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent row click
                           handleDeleteEntry(entry.id);
                         }}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 dark:text-red-400/80 hover:text-red-800 dark:hover:text-red-600 w-6 h-6"
                         aria-label="删除条目"
                       >
-                        <FaTrash size={16} />
+                        <FaTrash size={19} />
                       </button>
                     </div>
                   </td>
@@ -215,7 +214,7 @@ export default function FormTable({ formId }: FormTableProps) {
       <div className="mt-6">
         <button
           onClick={handleAddEntry}
-          className="bg-blue-500 hover:bg-blue-600 text-white p-3 py-4 rounded-lg flex items-center w-full justify-center mb-4"
+          className="bg-blue-500 dark:bg-blue-500/90 hover:bg-blue-600 text-white p-3 py-4 rounded-lg flex items-center w-full justify-center mb-4"
           aria-label="添加条目"
         >
           <FaPlus size={20} className="mr-2" />
@@ -223,7 +222,7 @@ export default function FormTable({ formId }: FormTableProps) {
         </button>
         <button
           onClick={() => router.push('/')}
-          className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
+          className="w-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-3 px-4 rounded-lg text-lg"
         >
           返回首页
         </button>
@@ -235,7 +234,7 @@ export default function FormTable({ formId }: FormTableProps) {
 
 function BoolFormCell ({value}: {value: boolean}) {
   return (
-    <td className={"px-4 py-3 whitespace-nowrap " + (value ? "text-green-600" : "text-red-300")}>
+    <td className={"px-4 py-3 whitespace-nowrap " + (value ? "text-green-600 dark:text-green-400" : "text-red-300 dark:text-red-500")}>
       {value ? '✓' : '✗'}
     </td>
   )

@@ -108,7 +108,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="name">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="name">
             表单名称
           </label>
           <input
@@ -124,7 +124,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         </div>
         
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="cityName">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="cityName">
             城市名
           </label>
           <input
@@ -140,7 +140,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         </div>
         
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="surveyDate">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="surveyDate">
             调研时间
           </label>
           <input
@@ -155,7 +155,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         </div>
         
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="branchCode">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="branchCode">
             网点代码
           </label>
           <input
@@ -171,7 +171,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         </div>
         
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="areaType">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="areaType">
             区域类型
           </label>
           <input
@@ -186,7 +186,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         </div>
         
         <div>
-          <label className="block text-gray-700 text-lg mb-2" htmlFor="courierCode">
+          <label className="block text-gray-700 dark:text-gray-100 text-lg mb-2" htmlFor="courierCode">
             小哥工号
           </label>
           <input
@@ -204,7 +204,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-lg text-xl font-medium"
+            className="w-full bg-blue-500 dark:bg-blue-500/80 hover:bg-blue-600 text-white py-4 px-4 rounded-lg text-xl font-medium"
           >
             {isNewForm ? '创建表单' : '保存修改'}
           </button>
@@ -214,7 +214,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
           <button
             type="button"
             onClick={() => router.back()}
-            className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
+            className="w-full bg-gray-300 dark:bg-gray-300/90 hover:bg-gray-400 text-gray-800 py-3 px-4 rounded-lg text-lg"
           >
             返回
           </button>
