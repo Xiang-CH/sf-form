@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
+import InstallPrompt from "@/components/PwaInstallPrompt";
 
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
@@ -23,7 +24,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#f9fafb"
 }
 
 export const metadata: Metadata = {
@@ -55,7 +55,8 @@ export default function RootLayout({
     <html lang="zh-CN">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#f9fafb" />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f9fafb" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101010" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="顺丰表单" />
@@ -67,6 +68,7 @@ export default function RootLayout({
         <ToastProvider>
           {children}
         </ToastProvider>
+        <InstallPrompt />
         <Analytics />
       </body>
     </html>

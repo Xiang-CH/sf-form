@@ -15,7 +15,7 @@ export default function FormEntryPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[100dvh]">
       <FormEntry formId={formId} entryId={entryId}/>
     </div>
   );

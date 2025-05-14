@@ -13,7 +13,7 @@ export default function FormTablePage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[100dvh]">
       <FormTable formId={formId} />
     </div>
   );
