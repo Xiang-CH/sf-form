@@ -199,14 +199,14 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
             运单号后四位
           </label> */}
           <input
-            type="text"
+            type="number"
             inputMode="numeric"
             pattern="[0-9]*"
             id="trackingNumberLastFour"
             name="trackingNumberLastFour"
             value={currentTrackingNumberInput}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-xl"
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-xl"
             placeholder="输入一个或多个运单号后四位"
             maxLength={4}
             // required

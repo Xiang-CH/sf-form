@@ -32,7 +32,7 @@ const SelectableCheckbox: React.FC<SelectableCheckboxProps> = ({
   return (
     <div
       className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
-        checked ? 'bg-green-100 dark:bg-green-300/40' : 'bg-gray-50 dark:bg-[var(--card)]'
+        checked ? 'bg-green-100 dark:bg-green-300/40' : 'bg-[var(--card)] dark:bg-[var(--card)]'
       } ${className} ${colSpan ? `col-span-${colSpan}` : ''}`}
       onClick={handleContainerClick}
     >
