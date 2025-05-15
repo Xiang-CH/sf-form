@@ -60,7 +60,7 @@ export const updateFormMetadata = (formId: string, metadata: Partial<FormMetadat
 };
 
 // Add a new entry to a form
-export const addFormEntry = (formId: string, entry: Omit<FormEntry, 'id' | 'createdAt'>): FormEntry | null => {
+export const addFormEntry = (formId: string, entry: Omit<FormEntry, 'id' | 'createdAt'>, iterations?: number): FormEntry | null => {
   const forms = getForms();
   const formIndex = forms.findIndex(form => form.id === formId);
 
@@ -68,7 +68,7 @@ export const addFormEntry = (formId: string, entry: Omit<FormEntry, 'id' | 'crea
 
   const newEntry: FormEntry = {
     ...entry,
-    id: `entry-${Date.now()}`,
+    id: `entry-${Date.now() + (iterations || 0)}`,
     createdAt: new Date().toISOString()
   };
 
