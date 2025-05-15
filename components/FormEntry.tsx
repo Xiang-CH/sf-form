@@ -97,27 +97,21 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
 
     // If in edit mode, handle single entry update
     if (entryId) {
-      if (!trackingNumbersToAdd.length) {
+      if (!currentTrackingNumberInput) {
         showToast('请填写运单号后四位', 'error');
         return;
       }
 
-      for (const number of trackingNumbersToAdd) {
-        if (number.length !== 4) {
-          showToast('运单号后四位必须是4个字符: ' + number, 'error');
-          return;
-        }
+      if (currentTrackingNumberInput.length !== 4) {
+        showToast('运单号后四位必须是4个字符', 'error');
+        return;
       }
 
       const updatedEntry = updateFormEntry(formId, entryId, { ...metadata, trackingNumberLastFour: currentTrackingNumberInput });
 
       if (updatedEntry) {
         showToast('条目已更新', 'success');
-        setIsSwiping(true);
-        setTimeout(() => {
-          router.push(`/table?formId=${formId}`);
-          setIsSwiping(false);
-        }, 500);
+        router.push(`/table?formId=${formId}`);
       } else {
         showToast('更新条目失败', 'error');
       }
@@ -199,9 +193,9 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
             运单号后四位
           </label> */}
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
-            pattern="[0-9]*"
+            pattern="[0-9]{4}"
             id="trackingNumberLastFour"
             name="trackingNumberLastFour"
             value={currentTrackingNumberInput}
