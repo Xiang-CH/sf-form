@@ -143,7 +143,7 @@ export async function exportFormToExcelServer(formData: string): Promise<{ succe
     });
     const fileName = `${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`;
 
-    const { url } = await put(fileName, excelBlob, { access: 'public', allowOverwrite: true });
+    const { url } = await put(fileName, excelBlob, { access: 'public', allowOverwrite: true, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
     if (url) {
         return {
