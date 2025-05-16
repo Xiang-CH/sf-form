@@ -7,9 +7,11 @@ import { Form } from '../types';
 import { getForms, deleteForm } from '../utils/storage';
 import { exportFormToExcel } from '../utils/excel';
 import { format } from 'date-fns';
+import { useToast } from './Toast';
 
 export default function FormList() {
   const [forms, setForms] = useState<Form[]>([]);
+  const toast = useToast();
 
   useEffect(() => {
     // Load forms from local storage
@@ -26,9 +28,16 @@ export default function FormList() {
     }
   };
 
-  const handleExportForm = (form: Form, e: React.MouseEvent) => {
+  const handleExportForm = async (form: Form, e: React.MouseEvent) => {
     e.stopPropagation();
-    exportFormToExcel(form);
+    toast.showToast("正在导出...", "info");
+    const success = await exportFormToExcel(form);
+
+    if (success) {
+      toast.showToast("导出成功", "success");
+    } else {
+      toast.showToast("导出失败，请稍后再试", "error");
+    }
   };
 
   // Replaced with Link component in the JSX

@@ -22,7 +22,7 @@ export default function FormTable({ formId }: FormTableProps) {
     const loadedForm = getFormById(formId);
     setForm(loadedForm);
   }, [formId]);
-  
+
   useEffect(() => {
     if (form) {
       form.entries.forEach((entry) => {
@@ -44,10 +44,16 @@ export default function FormTable({ formId }: FormTableProps) {
     }
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (form) {
-      exportFormToExcel(form);
-      toast.showToast("导出成功", "success");
+      toast.showToast("正在导出...", "info");
+      const success = await exportFormToExcel(form);
+
+      if (success) {
+        toast.showToast("导出成功", "success");
+      } else {
+        toast.showToast("导出失败，请稍后再试", "error");
+      }
     } else {
       toast.showToast("空白表单，导出失败", "error");
     }
@@ -198,7 +204,7 @@ export default function FormTable({ formId }: FormTableProps) {
                         </button>
                       </div>
                     </td>
-                  
+
                 </tr>
               ))}
             </tbody>
