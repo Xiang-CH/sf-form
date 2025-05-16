@@ -2,6 +2,7 @@
 
 import * as XLSX from 'xlsx-js-style';
 import { Form } from '../types';
+import { put } from "@vercel/blob";
 
 const borderStyle = {
   top: { style: "thin" },
@@ -18,7 +19,7 @@ export async function exportFormToExcelServer(formData: string): Promise<{ succe
   try {
     // Parse the form data
     const form: Form = JSON.parse(formData);
-    
+
     // Define the column headers for the main data table
     const tableHeaders = [
       '',
@@ -136,11 +137,24 @@ export async function exportFormToExcelServer(formData: string): Promise<{ succe
     XLSX.utils.book_append_sheet(workbook, worksheet, '表单数据');
 
     // Generate Excel file as binary string
-    const excelData = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
-    
+    const excelData = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+    const excelBlob = new Blob([excelData], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const fileName = `${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`;
+
+    const { url } = await put(fileName, excelBlob, { access: 'public' });
+
+    if (url) {
+        return {
+            success: true,
+            data: url
+        };
+    }
+
     return {
-      success: true,
-      data: excelData
+        success: false,
+        data: ""
     };
   } catch (error) {
     console.error('Server-side Excel export error:', error);
@@ -155,20 +169,20 @@ export async function exportFormToExcelServer(formData: string): Promise<{ succe
 function applyStyles(worksheet: XLSX.WorkSheet, form: Form, numColumns: number) {
   // Apply basic styling to all cells
   const lastRowIndex = 7 + form.entries.length - 1;
-  
+
   for (let r = 0; r <= lastRowIndex; r++) {
     for (let c = 0; c < numColumns; c++) {
       const cellAddress = XLSX.utils.encode_cell({ r, c });
-      
+
       // Create the cell if it doesn't exist
       if (!worksheet[cellAddress]) {
         worksheet[cellAddress] = { v: '', t: 's', s: {} };
       }
-      
+
       // Apply border style
       if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
       worksheet[cellAddress].s.border = borderStyle;
-      
+
       // Apply alignment based on cell position
       if (r === 0) { // Title row
         worksheet[cellAddress].s.alignment = { horizontal: 'center', vertical: 'center' };

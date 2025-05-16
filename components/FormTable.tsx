@@ -9,6 +9,8 @@ import { getFormById, deleteFormEntry } from '../utils/storage';
 import { exportFormToExcel } from '../utils/excel';
 import { useToast } from './Toast';
 
+import { exportFormToExcelServer } from '../actions/exportExcel';
+
 interface FormTableProps {
   formId: string;
 }
@@ -17,6 +19,7 @@ export default function FormTable({ formId }: FormTableProps) {
   const router = useRouter();
   const toast = useToast();
   const [form, setForm] = useState<Form | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const loadedForm = getFormById(formId);
@@ -52,6 +55,35 @@ export default function FormTable({ formId }: FormTableProps) {
       if (success) {
         toast.showToast("导出成功", "success");
       } else {
+        toast.showToast("导出失败，请稍后再试", "error");
+      }
+    } else {
+      toast.showToast("空白表单，导出失败", "error");
+    }
+  };
+
+  const handleExportExcelServer = async () => {
+    if (form) {
+      toast.showToast("正在导出...", "info");
+      try {
+        const result = await exportFormToExcelServer(JSON.stringify(form));
+        console.log("Server export result:", result);
+
+        if (result.success) {
+          if (result.data) {
+            toast.showToast("导出成功", "success");
+            setDownloadUrl(result.data);
+          }
+          // Show warning if there was an error with Qiniu upload
+          if (result.error) {
+            console.warn("Server export warning:", result.error);
+            toast.showToast("文件已下载，但云存储上传失败", "warning");
+          }
+        } else {
+          toast.showToast(result.error || "导出失败，请稍后再试", "error");
+        }
+      } catch (error) {
+        console.error("Server export error:", error);
         toast.showToast("导出失败，请稍后再试", "error");
       }
     } else {
@@ -227,6 +259,26 @@ export default function FormTable({ formId }: FormTableProps) {
         >
           返回首页
         </Link>
+      </div>
+      <div className="mt-10">
+        <button
+          onClick={handleExportExcelServer}
+          className="w-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-3 px-4 rounded-lg text-lg text-center block"
+        >
+          若下载失败，请点击这里使用服务器导出
+        </button>
+        {downloadUrl && (
+          <div>
+          <a
+            href={downloadUrl}
+            download={`${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`}
+            className="w-full mt-2 bg-green-500 dark:bg-green-500/80 hover:bg-green-600 text-white py-3 px-4 rounded-lg text-lg text-center block"
+          >
+            点击再次下载Excel文件
+          </a>
+          <span>{downloadUrl}</span>
+          </div>
+        )}
       </div>
     </div>
   );

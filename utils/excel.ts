@@ -381,49 +381,7 @@ export const exportFormToExcel = async (form: Form): Promise<boolean> => {
 
     return true; // Successfully exported
   } catch (error) {
-    console.info('Client-side Excel export error:', error);
-
-    // Try server-side export as fallback
-    try {
-      // Import dynamically to avoid server components being used in client components
-      const { exportFormToExcelServer } = await import('@/actions/exportExcel');
-
-      // Convert form to JSON string to pass to server action
-      const formJson = JSON.stringify(form);
-
-      // Call server action
-      const result = await exportFormToExcelServer(formJson);
-
-      if (result.success && result.data) {
-        // Convert base64 to blob
-        const binaryString = atob(result.data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const blob = new Blob([bytes.buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-        // Create download link
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-
-        // Cleanup
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 0);
-
-        return true; // Successfully exported via server
-      }
-
-      return false; // Failed to export via server
-    } catch (serverError) {
-      console.error('Server-side Excel export fallback error:', serverError);
-      return false; // Failed to export
-    }
+    console.error('Client-side Excel export error:', error);
+    return false; // Failed to export
   }
 };

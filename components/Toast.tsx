@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-export type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface Toast {
   id: string;
@@ -46,7 +46,8 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
             key={toast.id}
             className={`px-4 py-3 rounded-lg shadow-lg text-white whitespace-pre-wrap max-w-xs animate-fade-in-up ${
               toast.type === 'success' ? 'bg-green-500' :
-              toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+              toast.type === 'error' ? 'bg-red-500' :
+              toast.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
             }`}
           >
             {toast.message}
