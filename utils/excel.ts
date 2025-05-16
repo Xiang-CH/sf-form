@@ -355,7 +355,30 @@ export const exportFormToExcel = async (form: Form): Promise<boolean> => {
 
     // Generate Excel file
     const fileName = `${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
+    // XLSX.writeFile(workbook, fileName);
+
+    const excelData = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
+    const binaryString = atob(excelData);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    const blob = new Blob([bytes.buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${form.name || '表单'}_${form.branchCode}_${form.surveyDate}_${form.courierCode}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+
     return true; // Successfully exported
   } catch (error) {
     console.info('Client-side Excel export error:', error);
