@@ -9,7 +9,7 @@ export default function FormTablePage() {
   const formId = params.get("formId") as string;
 
   if (!formId) {
-    router.push('/form');
+    router.push('/');
   }
 
   return (

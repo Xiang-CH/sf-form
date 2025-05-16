@@ -23,6 +23,10 @@ export default function FormTable({ formId }: FormTableProps) {
 
   useEffect(() => {
     const loadedForm = getFormById(formId);
+    if (!loadedForm) {
+      router.push('/');
+      return;
+    }
     setForm(loadedForm);
   }, [formId]);
 
