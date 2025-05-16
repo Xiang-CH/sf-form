@@ -16,7 +16,16 @@ export default function FormList() {
     // Load forms from local storage
     const loadedForms = getForms();
     setForms(loadedForms);
-  }, []);
+
+    router.prefetch('/form');
+    router.prefetch('/entry');
+    router.prefetch('/table');
+    forms.forEach(form => {
+      router.prefetch(`/entry?formId=${form.id}`);
+      router.prefetch(`/table?formId=${form.id}`);
+      router.prefetch(`/form?formId=${form.id}`);
+    });
+  }, [router]);
 
   const handleDeleteForm = (formId: string, e: React.MouseEvent) => {
     e.stopPropagation();

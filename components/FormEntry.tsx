@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { FormEntry as FormEntryType } from '../types';
 import { addFormEntry, getFormById, getFormEntryById, updateFormEntry } from '../utils/storage';
@@ -56,6 +56,13 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
       }
     }
   }, [entryId, formId, router, showToast]);
+
+  useEffect(() => {
+    // Preload the table page for better UX
+    router.prefetch('/');
+    router.prefetch('/form');
+    router.prefetch(`/table?formId=${formId}`);
+  }, [formId, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;

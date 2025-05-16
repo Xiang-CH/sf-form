@@ -57,6 +57,13 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
     }
   }, [formId, isNewForm]);
 
+  useEffect(() => {
+    // Preload the table page for better UX
+    router.prefetch('/');
+    router.prefetch('/entry?formId=' + formId);
+    router.prefetch('/table?formId=' + formId);
+  }, [formId, router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));

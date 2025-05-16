@@ -22,6 +22,18 @@ export default function FormTable({ formId }: FormTableProps) {
     setForm(loadedForm);
   }, [formId]);
 
+  useEffect(() => {
+    // Preload the table page for better UX
+    router.prefetch('/');
+    router.prefetch('/entry?formId=' + formId);
+    router.prefetch(`/form?formId=${formId}`);
+    if (form) {
+      form.entries.forEach((entry) => {
+        router.prefetch(`/entry?formId=${formId}&entryId=${entry.id}`);
+      });
+    }
+  }, [formId, router]);
+
   const handleDeleteEntry = (entryId: string) => {
     if (confirm('确定要删除这个条目吗？')) {
       const success = deleteFormEntry(formId, entryId);
