@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { FormEntry as FormEntryType } from '../types';
 import { addFormEntry, getFormById, getFormEntryById, updateFormEntry } from '../utils/storage';
 import { useToast } from './Toast';
@@ -60,7 +61,6 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
   useEffect(() => {
     // Preload the table page for better UX
     router.prefetch('/');
-    router.prefetch('/form');
     router.prefetch(`/table?formId=${formId}`);
   }, [formId, router]);
 
@@ -160,7 +160,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
           notes: ''
         });
         setCurrentTrackingNumberInput('');
-        
+
 
         // Update the displayed count based on how many were actually added
         setCurrentEntryCount(prev => prev + successfullyAddedCount);
@@ -178,9 +178,7 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
     }
   };
 
-  const handleViewTable = () => {
-    router.push(`/table?formId=${formId}`);
-  };
+  // Replaced with Link component in the JSX
 
   return (
     <div className={`p-4 pt-6 max-w-md mx-auto pb-2 animate-fade-in-left ${isSwiping ? 'swipe-left-animation' : ''}`}>
@@ -296,24 +294,42 @@ export default function FormEntry({ formId, entryId }: FormEntryProps) {
             {entryId ? '保存修改' : '保存并继续'}
           </button>
         </div>
+        
 
-        <div className="flex space-x-4">
-          <button
-            type="button"
-            onClick={handleViewTable}
-            className="flex-1 bg-blue-500 dark:bg-blue-500/90 hover:bg-blue-600 dark:hover:bg-blue-600/90 text-white py-3 px-4 rounded-lg text-lg"
-          >
-            查看表格
-          </button>
 
-          <button
-            type="button"
-            onClick={() => router.push('/')}
-            className="flex-1 bg-gray-300 dark:bg-gray-300/95  hover:bg-gray-400 dark:hover:bg-gray-100/90 text-gray-800 py-3 px-4 rounded-lg text-lg"
-          >
-            返回首页
-          </button>
-        </div>
+        {
+          !entryId? 
+            (<div className="flex space-x-4">
+            <Link
+              href={`/table?formId=${formId}`}
+              className="flex-1 bg-blue-500 dark:bg-blue-500/90 hover:bg-blue-600 dark:hover:bg-blue-600/90 text-white py-3 px-4 rounded-lg text-lg text-center"
+            >
+              查看表格
+            </Link>
+
+            <Link
+              href="/"
+              className="flex-1 bg-gray-300 dark:bg-gray-300/95  hover:bg-gray-400 dark:hover:bg-gray-100/90 text-gray-800 py-3 px-4 rounded-lg text-lg text-center"
+            >
+              返回首页
+            </Link>
+          </div>) :
+        (
+          <div className="flex">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                router.back()
+              }}
+              className="flex-1 bg-gray-300 dark:bg-gray-300/95  hover:bg-gray-400 dark:hover:bg-gray-100/90 text-gray-800 py-3 px-4 rounded-lg text-lg text-center"
+            >
+              取消修改
+            </button>
+
+          </div>
+        )
+        }
+      
       </form>
     </div>
   );

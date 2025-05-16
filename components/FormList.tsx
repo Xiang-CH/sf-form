@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { FaPlus, FaTrash, FaFileExport } from 'react-icons/fa';
 import { Form } from '../types';
 import { getForms, deleteForm } from '../utils/storage';
@@ -10,22 +10,13 @@ import { format } from 'date-fns';
 
 export default function FormList() {
   const [forms, setForms] = useState<Form[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     // Load forms from local storage
     const loadedForms = getForms();
     setForms(loadedForms);
 
-    router.prefetch('/form');
-    router.prefetch('/entry');
-    router.prefetch('/table');
-    forms.forEach(form => {
-      router.prefetch(`/entry?formId=${form.id}`);
-      router.prefetch(`/table?formId=${form.id}`);
-      router.prefetch(`/form?formId=${form.id}`);
-    });
-  }, [router]);
+  }, []);
 
   const handleDeleteForm = (formId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,9 +31,7 @@ export default function FormList() {
     exportFormToExcel(form);
   };
 
-  const navigateToForm = (formId: string) => {
-    router.push(`/entry?formId=${formId}`);
-  };
+  // Replaced with Link component in the JSX
 
   // Group forms by surveyDate (most recent first)
   const groupedForms = forms
@@ -61,24 +50,24 @@ export default function FormList() {
       <div className='border-b h-px w-full mb-4'></div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">表单列表</h2>
-        <button
-          onClick={() => router.push('/form')}
-          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg"
+        <Link
+          href="/form"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg flex items-center justify-center"
           aria-label="新建表单"
         >
           <FaPlus size={24} />
-        </button>
+        </Link>
       </div>
 
       {forms.length === 0 ? (
         <div className="text-center py-8 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <p className="text-gray-500 dark:text-gray-400 mb-4">暂无表单</p>
-          <button
-            onClick={() => router.push('/form')}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg"
+          <Link
+            href="/form"
+            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg inline-block"
           >
             创建第一个表单
-          </button>
+          </Link>
         </div>
       ) : (
         <div className='animate-fade-in-up'>
@@ -91,25 +80,29 @@ export default function FormList() {
                  ).map(form => (
                   <li
                     key={form.id}
-                    onClick={() => navigateToForm(form.id)}
                     className="bg-[var(--card)] p-4 rounded-lg shadow-md dark:shadow-lg hover:shadow-lg dark:hover:shadow-xl transition-shadow"
                   >
                     <div className="flex justify-between items-start">
-                      <div>
-                        <h2 className="text-xl font-semibold">{form.name || '未命名表单'}</h2>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                          {form.cityName} | {form.branchCode} | {form.areaType}
-                        </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-xs mt-2">
-                          调研时间: {form.surveyDate}
-                        </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-xs">
-                          条目数: {form.entries.length}
-                        </p>
-                        <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
-                          创建于: {format(new Date(form.createdAt), 'yyyy-MM-dd HH:mm')}
-                        </p>
-                      </div>
+                      <Link
+                        href={`/entry?formId=${form.id}`}
+                        className="block flex-1"
+                      >
+                        <div>
+                          <h2 className="text-xl font-semibold">{form.name || '未命名表单'}</h2>
+                          <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                            {form.cityName} | {form.branchCode} | {form.areaType}
+                          </p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs mt-2">
+                            调研时间: {form.surveyDate}
+                          </p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs">
+                            条目数: {form.entries.length}
+                          </p>
+                          <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+                            创建于: {format(new Date(form.createdAt), 'yyyy-MM-dd HH:mm')}
+                          </p>
+                        </div>
+                      </Link>
                       <div className="flex space-x-2">
                         <button
                           onClick={(e) => handleExportForm(form, e)}

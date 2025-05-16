@@ -99,6 +99,7 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
       }
       savedFormId = updatedForm.id;
     }
+    router.prefetch(`/entry?formId=${savedFormId}`);
 
     if (onSave) {
       onSave(savedFormId);
