@@ -3,11 +3,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import InstallPrompt from "@/components/PwaInstallPrompt";
 
+
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 
 export const dynamic = 'force-static'
-// export const revalidate = 0
+export const revalidate = false;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
