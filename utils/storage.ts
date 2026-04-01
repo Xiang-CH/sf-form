@@ -1,12 +1,32 @@
 import { Form, FormEntry, FormMetadata } from '../types';
 
 const FORMS_STORAGE_KEY = 'sf-forms';
+const FORM_DEFAULTS_KEY = 'formDefaults';
+
+/** Real browser Storage only — Node may expose a stub without working methods. */
+function getWebStorage(): Storage | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const s = window.localStorage;
+    if (
+      s &&
+      typeof s.getItem === 'function' &&
+      typeof s.setItem === 'function'
+    ) {
+      return s;
+    }
+  } catch {
+    // private mode / denied
+  }
+  return null;
+}
 
 // Get all forms from local storage
 export const getForms = (): Form[] => {
-  if (typeof window === 'undefined') return [];
+  const storage = getWebStorage();
+  if (!storage) return [];
 
-  const storedForms = localStorage.getItem(FORMS_STORAGE_KEY);
+  const storedForms = storage.getItem(FORMS_STORAGE_KEY);
   if (!storedForms) return [];
 
   try {
@@ -36,7 +56,10 @@ export const saveForm = (formMetadata: Omit<FormMetadata, 'id' | 'createdAt' | '
     entries: []
   };
 
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify([...forms, newForm]));
+  const storage = getWebStorage();
+  if (!storage) return newForm;
+
+  storage.setItem(FORMS_STORAGE_KEY, JSON.stringify([...forms, newForm]));
   return newForm;
 };
 
@@ -54,7 +77,10 @@ export const updateFormMetadata = (formId: string, metadata: Partial<FormMetadat
   };
 
   forms[formIndex] = updatedForm;
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  const storage = getWebStorage();
+  if (storage) {
+    storage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  }
 
   return updatedForm;
 };
@@ -75,7 +101,10 @@ export const addFormEntry = (formId: string, entry: Omit<FormEntry, 'id' | 'crea
   forms[formIndex].entries.push(newEntry);
   forms[formIndex].updatedAt = new Date().toISOString();
 
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  const storage = getWebStorage();
+  if (storage) {
+    storage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  }
 
   return newEntry;
 };
@@ -87,7 +116,10 @@ export const deleteForm = (formId: string): boolean => {
 
   if (updatedForms.length === forms.length) return false;
 
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify(updatedForms));
+  const storage = getWebStorage();
+  if (storage) {
+    storage.setItem(FORMS_STORAGE_KEY, JSON.stringify(updatedForms));
+  }
   return true;
 };
 
@@ -105,7 +137,10 @@ export const deleteFormEntry = (formId: string, entryId: string): boolean => {
   forms[formIndex].entries = updatedEntries;
   forms[formIndex].updatedAt = new Date().toISOString();
 
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  const storage = getWebStorage();
+  if (storage) {
+    storage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  }
   return true;
 };
 
@@ -136,7 +171,32 @@ export const updateFormEntry = (formId: string, entryId: string, updatedData: Om
   forms[formIndex].entries[entryIndex] = updatedEntry;
   forms[formIndex].updatedAt = new Date().toISOString();
 
-  localStorage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  const storage = getWebStorage();
+  if (storage) {
+    storage.setItem(FORMS_STORAGE_KEY, JSON.stringify(forms));
+  }
 
   return updatedEntry;
 };
+
+export function readFormDefaults(): Partial<FormMetadata> {
+  const storage = getWebStorage();
+  if (!storage) return {};
+  try {
+    const raw = storage.getItem(FORM_DEFAULTS_KEY);
+    return raw ? (JSON.parse(raw) as Partial<FormMetadata>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function writeFormDefaults(
+  data: Pick<
+    FormMetadata,
+    'cityName' | 'branchCode' | 'areaType' | 'courierCode'
+  >
+): void {
+  const storage = getWebStorage();
+  if (!storage) return;
+  storage.setItem(FORM_DEFAULTS_KEY, JSON.stringify(data));
+}

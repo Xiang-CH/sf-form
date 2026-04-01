@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { FormMetadata as FormMetadataType } from '../types';
-import { saveForm, updateFormMetadata, getFormById } from '../utils/storage';
+import {
+  saveForm,
+  updateFormMetadata,
+  getFormById,
+  readFormDefaults,
+  writeFormDefaults,
+} from '../utils/storage';
 
 interface FormMetadataProps {
   formId?: string;
@@ -17,20 +23,6 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
 
   const [formData, setFormData] = useState<Partial<FormMetadataType>>(() => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    if (isNewForm) {
-      let defaults: Partial<FormMetadataType> = {};
-      try {
-        defaults = JSON.parse(localStorage.getItem('formDefaults') || '{}') as Partial<FormMetadataType>;
-      } catch {}
-      return {
-        name: '',
-        cityName: defaults.cityName || '',
-        surveyDate: today,
-        branchCode: defaults.branchCode || '',
-        areaType: defaults.areaType || '',
-        courierCode: defaults.courierCode || ''
-      };
-    }
     return {
       name: '',
       cityName: '',
@@ -58,6 +50,18 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
   }, [formId, isNewForm]);
 
   useEffect(() => {
+    if (!isNewForm) return;
+    const defaults = readFormDefaults();
+    setFormData((prev) => ({
+      ...prev,
+      cityName: defaults.cityName || prev.cityName,
+      branchCode: defaults.branchCode || prev.branchCode,
+      areaType: defaults.areaType || prev.areaType,
+      courierCode: defaults.courierCode || prev.courierCode,
+    }));
+  }, [isNewForm]);
+
+  useEffect(() => {
     // Preload the table page for better UX
     router.prefetch('/');
     router.prefetch('/entry?formId=' + formId);
@@ -81,15 +85,12 @@ export default function FormMetadata({ formId, onSave }: FormMetadataProps) {
     
     if (isNewForm) {
       const newForm = saveForm(formData as Omit<FormMetadataType, 'id' | 'createdAt' | 'updatedAt'>);
-      localStorage.setItem(
-        'formDefaults',
-        JSON.stringify({
-          cityName: formData.cityName,
-          branchCode: formData.branchCode,
-          areaType: formData.areaType,
-          courierCode: formData.courierCode
-        })
-      );
+      writeFormDefaults({
+        cityName: formData.cityName ?? '',
+        branchCode: formData.branchCode ?? '',
+        areaType: formData.areaType ?? '',
+        courierCode: formData.courierCode ?? ''
+      });
       savedFormId = newForm.id;
     } else {
       const updatedForm = updateFormMetadata(formId, formData);
